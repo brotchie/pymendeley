@@ -1,7 +1,7 @@
+.. image:: https://docs.google.com/drawings/pub?id=1kHdWh4RxbXWWCv5Q9CHMtnIRAtUFGad5xcRDKuBXIsA&w=829&h=279
+
 Python package for accessing Mendeley's local sqlite3 database
 ==============================================================
-
-.. image:: https://docs.google.com/drawings/pub?id=1kHdWh4RxbXWWCv5Q9CHMtnIRAtUFGad5xcRDKuBXIsA&w=829&h=279
 
 pymendeley retrieves reference information from Mendeley's local sqlite3
 database.
