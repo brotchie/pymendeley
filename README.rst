@@ -28,7 +28,6 @@ Partial output of result::
     Vasicek - 1977 - An equilibrium characterization of the term structure
     Veldhuizen - 1995 - Expression Templates
     Verousis, ap Gwilym - 2010 - An improved algorithm for cleaning Ultra High-Frequency data
-    Vlaamse, Belgie, Wetenschappen, Kunsten - 2007 - 5 TH ACTUARIAL AND FINANCIAL
     Waggoner - 1997 - Spline Methods for Extracting Interest Rate Curves from Coupon Bond Prices
     Wang, Zhou, Guan - 2011 - Detecting Collusive Cliques in Futures Markets Based on Trading Behaviors
     ...
