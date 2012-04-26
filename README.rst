@@ -11,6 +11,7 @@ Install using::
 Dump a list of all references::
 
     import mendeley
+    import operator
 
     db = mendeley.MendeleyDatabaseInterface()
     references = db.get_references()
