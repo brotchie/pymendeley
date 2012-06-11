@@ -16,6 +16,11 @@ from ConfigParser import ConfigParser
 EXPECTED_MENDELEY_SQLITE_DIR = os.path.expanduser('~/.local/share/data/Mendeley Ltd./Mendeley Desktop')
 EXPECTED_MENDELEY_CONFIG_PATH = os.path.expanduser('~/.config/Mendeley Ltd./Mendeley Desktop.conf')
 
+MENDELEY_ROOT_FOLDER_ID = -1
+
+class MendeleyError(StandardError):
+    pass
+
 def find_mendeley_sqlite_path():
     """
     Returns the path to the Mendeley sqlite3 database if in
@@ -60,6 +65,9 @@ class MendeleyDatabaseInterface(object):
             else:
                 return None
 
+    def get_reference_path(self, reference):
+        return self.get_reference_path_by_uuid(reference.uuid)
+
     def get_reference_path_by_uuid(self, uuid):
         """
         For a given document UUID, looks up and returns
@@ -74,6 +82,37 @@ class MendeleyDatabaseInterface(object):
                 return localurl
             else:
                 return None
+
+    def get_references_in_folder(self, folder):
+        """
+        Gets all the references contained within a Mendeley virtual folder.
+        The folder path should be given from the MyLibrary root using
+        the / unix path separator.
+
+        """
+        folderid = self._find_folderid(folder.strip('/').split('/'))
+        with sqlite3.connect(self.path) as db:
+            c = db.execute("SELECT Documents.uuid, group_concat(DocumentContributors.lastName, ', ') as authors, Documents.year, Documents.title , Documents.publication FROM DocumentContributors, Documents, DocumentFolders WHERE Documents.id=DocumentContributors.documentId AND DocumentFolders.documentId=Documents.id AND DocumentFolders.folderId=? group by Documents.year, Documents.title ORDER BY authors", (folderid,))
+            return [MendeleyReference(*row) for row in c]
+
+    def _find_folderid(self, folders, parentid=MENDELEY_ROOT_FOLDER_ID):
+        """
+        Recursively searches for the folder id at a path. The path is specified
+        as a list of strings.
+
+        """
+        if folders:
+            name, rest = folders[0], folders[1:]
+            with sqlite3.connect(self.path) as db:
+                c = db.execute('SELECT id FROM Folders WHERE name=? AND parentId=?', (name, parentid))
+                row = c.fetchone()
+                if row:
+                    folderid, = row
+                else:
+                    raise MendeleyError('Cannot find folder with name {0}.'.format(name))
+            return self._find_folderid(rest, folderid)
+        else:
+            return parentid
 
 class MendeleyReference(object):
     """
